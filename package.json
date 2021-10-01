@@ -1,0 +1,46 @@
+{
+  "name": "purescript-game-score",
+  "version": "3.0.0",
+  "description": "An application in PureScript and React to record scores when playing board games",
+  "keywords": [
+    "Purescript",
+    "React",
+    "Scores"
+  ],
+  "contributors": [
+    {
+      "name": "Simon Dowdeswell",
+      "url": "https://github.com/dowdeswells"
+    }
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "spago build",
+    "bundle": "yarn bundle:build && yarn bundle:dce && yarn bundle:parcel",
+    "bundle:build": "spago build --purs-args '--codegen corefn'",
+    "bundle:dce": "zephyr -f Main.main",
+    "bundle:parcel": "parcel build index.html --no-source-maps",
+    "clean": "rm -Rf .cache dist serve output dce-output node_modules .spago *.lock",
+    "postinstall": "spago install",
+    "serve": "yarn build && yarn serve:parcel",
+    "serve:parcel": "parcel serve --no-source-maps --out-dir serve index.html",
+    "test": "spago test --no-install",
+    "spago": "spago",
+    "repl": "spago repl"
+  },
+  "devDependencies": {
+    "parcel": "1.12.3",
+    "purescript": "^0.14.2",
+    "purescript-psa": "^0.8.2",
+    "purty": "^7.0.0",
+    "spago": "^0.20.3",
+    "zephyr": "https://github.com/jonasbuntinx/zephyr.git"
+  },
+  "dependencies": {
+    "dayjs": "^1.10.5",
+    "nano-markdown": "^1.2.1",
+    "preact": "^10.5.13",
+    "react": "npm:@preact/compat@^0.0.4",
+    "react-dom": "npm:@preact/compat@^0.0.4"
+  }
+}
