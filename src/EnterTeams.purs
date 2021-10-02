@@ -42,6 +42,7 @@ mkEnterTeams = do
                     ( \i teamName ->
                         R.input
                           { type: "text"
+                              , className: "bg-blue-500 text-white"
                           , placeholder: "team name"
                           , value: teamName
                           , onChange: handler targetValue $ traverse_ \str -> setTeams \_ -> (replaceTeam i str teams)
