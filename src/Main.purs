@@ -1,16 +1,18 @@
 module Main where
 
 import Prelude
+
 import Data.Array as Array
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.String (fromCodePointArray, toCodePointArray)
 import Effect (Effect)
 import Effect.Exception (throw)
+import EnterTeams as ET
 import React.Basic.DOM (render)
 import React.Basic.DOM as R
 import React.Basic.DOM.Events (targetValue)
 import React.Basic.Events (handler)
-import React.Basic.Hooks (Component, component, useState, (/\))
+import React.Basic.Hooks (Component, component, useState, (/\), mkReducer, useReducer)
 import React.Basic.Hooks as React
 import Web.HTML (window)
 import Web.HTML.HTMLDocument (body)
@@ -36,6 +38,7 @@ mkTextField = do
       $ R.div_
           [ R.input { placeholder: "Text to reverse", value: content, onChange }
           , R.div_ [ R.text (reverse content) ]
+          , ET.enterTeams {}
           ]
 
 reverse :: String -> String
