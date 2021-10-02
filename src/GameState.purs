@@ -4,7 +4,7 @@ import Prelude
 
 import Data.Array (mapWithIndex)
 import Data.List (List(..), filter, head, foldr, index)
-import Data.Maybe (Maybe)
+import Data.Maybe (Maybe(..))
 
 newtype Score
   = Score Int
@@ -18,10 +18,13 @@ data TeamScore = TeamScore String (List Score)
 instance showTeamScore :: Show TeamScore where
   show (TeamScore n l) = "Team: " <> n <> " = " <> (show l)
 
-data GameScore = GameScore (List TeamScore)
+data GameScore = 
+    Initial
+    | GameScore (List TeamScore)
 
 instance showGameScore :: Show GameScore where
   show (GameScore l) = "Game: " <> (show l)
+  show Initial = "Not playing"
 
 
 getTeamName :: TeamScore -> String
@@ -32,11 +35,13 @@ getTeamScore (TeamScore _ l) = l
 
 lookupTeam :: String -> GameScore -> Maybe TeamScore
 lookupTeam teamName (GameScore l) = head $ filter (\e -> (getTeamName e) == teamName) l
+lookupTeam _ Initial = Nothing
 
 lookupTeamByIndex :: Int -> GameScore -> Maybe TeamScore
 lookupTeamByIndex i (GameScore l) = index l i
+lookupTeamByIndex _ Initial = Nothing
 
-newGame :: List String -> GameScore
+newGame :: Array String -> GameScore
 newGame names = GameScore $ foldr (\tn gs -> Cons (newTeam tn) gs) Nil names
   where newTeam tn = TeamScore tn Nil
 

@@ -1,17 +1,18 @@
 module Main where
 
 import Prelude
-
 import Data.Array as Array
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.String (fromCodePointArray, toCodePointArray)
 import Effect (Effect)
+import Effect.Console (logShow)
 import Effect.Exception (throw)
 import EnterTeams as ET
+import GameState as GS
 import React.Basic.DOM (render)
 import React.Basic.DOM as R
 import React.Basic.DOM.Events (targetValue)
-import React.Basic.Events (handler)
+import React.Basic.Events (handler, handler_)
 import React.Basic.Hooks (Component, component, useState, (/\), mkReducer, useReducer)
 import React.Basic.Hooks as React
 import Web.HTML (window)
@@ -25,23 +26,31 @@ main = do
   case body of
     Nothing -> throw "Could not find body."
     Just b -> do
-      textField <- mkTextField
-      render (textField {}) (toElement b)
+      app <- mkApp
+      render (app {}) (toElement b)
 
-mkTextField :: Component {}
-mkTextField = do
-  component "TextField" \_ -> React.do
-    content /\ setContent <- useState ""
+mkApp :: Component {}
+mkApp = do
+  component "app" \_ -> React.do
+    gameState /\ setGameState <- useState GS.Initial
     let
-      onChange = handler targetValue (setContent <<< const <<< fromMaybe "")
+      onClickOk teams = setGameState \_ -> GS.newGame teams --handler_ (logShow "here")
     pure
-      $ R.div_
-          [ R.input { placeholder: "Text to reverse", value: content, onChange }
-          , R.div_ [ R.text (reverse content) ]
-          , ET.enterTeams {}
-          ]
+      $ case gameState of
+          GS.Initial ->
+            R.div_
+              [ ET.enterTeams
+                  { onOk: onClickOk
+                  }
+              ]
+          GS.GameScore scorelist ->
+            R.div_
+              [ R.text "Game has started"
+              , R.div_ [
+                
+              ]
+              , R.div_ []
+              ]
 
 reverse :: String -> String
 reverse = fromCodePointArray <<< Array.reverse <<< toCodePointArray
-
-
