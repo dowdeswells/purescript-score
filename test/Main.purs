@@ -20,7 +20,7 @@ main = do
         let actual = len g
               where
               g = newGame $ ["Simon","Lara","Sam"]
-              len (GameScore l) = foldl (\acc _ -> acc + 1) 0 l
+              len (GameScore l _) = foldl (\acc _ -> acc + 1) 0 l
               len Initial = 0
         Assert.equal 3 actual
 

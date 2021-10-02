@@ -1,9 +1,9 @@
 module EnterScore where
 
 import Prelude
-import Data.Array (mapWithIndex)
-import Data.Array as Array
 import Data.Foldable (traverse_)
+import Data.Int (fromString)
+import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic.DOM as R
@@ -26,7 +26,7 @@ enterScore = unsafePerformEffect mkEnterScore
 mkEnterScore :: Component Props
 mkEnterScore = do
   component "EnterScore" \props -> React.do
-    text /\ setText <- useState { text:"", value: 0 }
+    text /\ setText <- useState { text: "", value: 0 }
     pure
       $ R.div_
           [ R.button
@@ -41,8 +41,12 @@ mkEnterScore = do
                   , className: "border-gray-500 border-2 rounded p-2"
                   , placeholder: "score"
                   , value: text.text
-                  , onChange: handler targetValue $ traverse_ \str -> setText (\_ -> {text:str, value:0})
+                  , onChange: handler targetValue $ traverse_ \str -> setText (\_ -> convertInput str)
                   }
               ]
-
           ]
+
+convertInput :: String -> InputState
+convertInput s = case fromString s of
+  Nothing -> { text: s, value: 0 }
+  Just n -> { text: s, value: n }
