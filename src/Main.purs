@@ -1,21 +1,15 @@
 module Main where
 
 import Prelude
-
-import Data.Array as Array
-import Data.Maybe (Maybe(..), fromMaybe)
-import Data.String (fromCodePointArray, toCodePointArray)
+import Data.Maybe (Maybe(..))
 import Effect (Effect)
-import Effect.Console (logShow)
 import Effect.Exception (throw)
 import EnterScore as ES
 import EnterTeams as ET
 import GameState as GS
 import React.Basic.DOM (render)
 import React.Basic.DOM as R
-import React.Basic.DOM.Events (targetValue)
-import React.Basic.Events (handler, handler_)
-import React.Basic.Hooks (Component, component, useState, (/\), mkReducer, useReducer)
+import React.Basic.Hooks (Component, component, useState, (/\))
 import React.Basic.Hooks as React
 import ScoresView (scoreView)
 import Web.HTML (window)
@@ -38,9 +32,7 @@ mkApp = do
     gameState /\ setGameState <- useState GS.Initial
     let
       onClickOk teams = setGameState \_ -> GS.newGame teams --handler_ (logShow "here")
-      onAddScore i = do
-          setGameState \_ -> GS.addScore (GS.Score i) gameState
-          logShow gameState
+      onAddScore i = setGameState \_ -> GS.addScore (GS.Score i) gameState
     pure
       $ case gameState of
           GS.Initial ->
@@ -55,10 +47,7 @@ mkApp = do
               , R.div_
                   [ ES.enterScore { onOk: onAddScore }
                   ]
-              , R.div_ [
-                scoreView {gameState:gameScore}
+              , R.div_
+                  [ scoreView { gameState: gameScore }
+                  ]
               ]
-              ]
-
-reverse :: String -> String
-reverse = fromCodePointArray <<< Array.reverse <<< toCodePointArray

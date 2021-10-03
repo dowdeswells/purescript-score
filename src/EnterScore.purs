@@ -32,7 +32,10 @@ mkEnterScore = do
           [ R.button
               { type: "button"
               , className: "rounded bg-blue-500 text-white p-2"
-              , onClick: handler_ (props.onOk text.value)
+              , onClick:
+                  handler_ do
+                    props.onOk text.value
+                    setText \_ -> { text: "", value: 0 }
               , children: [ R.text "Ok" ]
               }
           , R.div_

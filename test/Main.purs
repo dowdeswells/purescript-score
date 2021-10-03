@@ -25,31 +25,32 @@ main = do
       
       test "add a score to team 0" do
         let Tuple teamScores newTeamIndex = case newGameState of
-                    Initial -> Tuple ((TeamScore "" Nil):Nil) 0
+                    Initial -> Tuple ((TeamScore "" Nil (Score 0)):Nil) 0
                     GameScore ts i -> Tuple ts i
                     where 
                     newGameState = addScore (Score 44) initialGame
-        Assert.assert "gamestate is advanced for team at index 0" $ (newTeamIndex == 1) && (head teamScores) == Just (TeamScore "Simon" ((Score 44):Nil))
+        Assert.assert "gamestate is advanced for team at index 0" $ (newTeamIndex == 1) 
+                  && (head teamScores) == Just (TeamScore "Simon" ((Score 44):Nil) (Score 44))
 
       test "add a score to team 0 and team 1" do
         let Tuple teamScores newTeamIndex = case newGameState of
-                    Initial -> Tuple ((TeamScore "" Nil):Nil) 0
+                    Initial -> Tuple ((TeamScore "" Nil (Score 0)):Nil ) 0
                     GameScore ts i -> Tuple ts i
                     where 
                     newGameState = addScore (Score 55) $ addScore (Score 44) initialGame
         Assert.assert "gamestate is advanced for team at index 1" $
                           (newTeamIndex == 2) 
-                          && (head teamScores) == Just (TeamScore "Simon" ((Score 44):Nil))
-                          && (head $ (drop 1) teamScores) == Just (TeamScore "Lara" ((Score 55):Nil))
+                          && (head teamScores) == Just (TeamScore "Simon" ((Score 44):Nil) (Score 44))
+                          && (head $ (drop 1) teamScores) == Just (TeamScore "Lara" ((Score 55):Nil) (Score 55))
 
       test "get a Team from a game by team name" do
-        let name = getName team
+        let name = getMaybeTeamName team
               where 
               team = lookupTeam "Simon" initialGame 
         Assert.equal "Simon" name
 
       test "get a Team from a game by index" do
-        let name = getName team
+        let name = getMaybeTeamName team
               where 
               team = lookupTeamByIndex 0 initialGame 
         Assert.equal "Simon" name
@@ -63,9 +64,8 @@ initialGame = newGame ["Simon","Lara","Sam"]
 
 len :: GameScore -> Int
 len (GameScore l _) = foldl (\acc _ -> acc + 1) 0 l
-len Initial = 0            
-      
-getName :: Maybe TeamScore -> String
-getName t = case t of
-            Just (TeamScore tn _) -> tn
-            Nothing -> ""   
+len Initial = 0 
+
+getMaybeTeamName :: Maybe TeamScore -> String
+getMaybeTeamName (Just t) = getTeamName t 
+getMaybeTeamName Nothing = ""
