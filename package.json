@@ -16,6 +16,7 @@
   "license": "MIT",
   "scripts": {
     "build": "spago build",
+    "buildall": "yarn build && yarn bundle:parcel",
     "bundle": "yarn bundle:build && yarn bundle:dce && yarn bundle:parcel",
     "bundle:build": "spago build --purs-args '--codegen corefn'",
     "bundle:dce": "zephyr -f Main.main",
