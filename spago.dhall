@@ -10,6 +10,7 @@
   , "console"
   , "control"
   , "datetime"
+  , "debug"
   , "effect"
   , "either"
   , "exceptions"

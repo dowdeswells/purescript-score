@@ -9,18 +9,21 @@ import Data.Maybe (Maybe(..))
 newtype Score
   = Score Int
 
-derive newtype instance semiringScore :: Semiring Score
-derive newtype instance eqScore :: Eq Score
-derive newtype instance showScore :: Show Score
-
 data TeamScore = TeamScore String (List Score)
-
-instance showTeamScore :: Show TeamScore where
-  show (TeamScore n l) = "Team: " <> n <> " = " <> (show l)
 
 data GameScore = 
     Initial
     | GameScore (List TeamScore) Int
+
+derive newtype instance semiringScore :: Semiring Score
+derive newtype instance eqScore :: Eq Score
+derive newtype instance showScore :: Show Score
+
+instance showTeamScore :: Show TeamScore where
+  show (TeamScore n l) = "{Team: " <> n <> " = " <> (show l) <> "}"
+
+instance equalTeamScore :: Eq TeamScore where
+  eq (TeamScore n1 l1) (TeamScore n2 l2) = (n1 == n2) && (l1 == l2)
 
 instance showGameScore :: Show GameScore where
   show (GameScore l i) = "Game: " <> (show l) <> " current turn:" <> (show i)
@@ -52,7 +55,7 @@ addScore :: Score -> GameScore -> GameScore
 addScore _ Initial = Initial
 addScore score (GameScore teams teamIndex) = GameScore newTeams newIndex
   where
-    newIndex = teamIndex + 1 `mod` (length teams)
+    newIndex = (teamIndex + 1) `mod` (length teams)
     newTeams = mapWithIndex (\li ts@(TeamScore teamName scores)-> case li == teamIndex of 
                                                 true -> TeamScore teamName (Cons score scores)
                                                 false -> ts) teams
