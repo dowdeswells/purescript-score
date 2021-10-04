@@ -1,7 +1,6 @@
 module ScoresView where
 
 import Prelude
-
 import Data.Array as Array
 import Data.Foldable (traverse_)
 import Data.Int (fromString, toStringAs, decimal)
@@ -59,6 +58,6 @@ mkScoreView = do
 scoreDiv :: Score -> React.JSX
 scoreDiv (Score s) =
   R.div
-    { className: "flex-shrink border-2 border-blue-800 bg-blue-500"
+    { className: "flex-shrink rounded bg-blue-500 p-3"
     , children: [ R.text (toStringAs decimal s) ]
     }

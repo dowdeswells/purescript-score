@@ -1,14 +1,14 @@
 module EnterScore where
 
+import Data.Maybe (Maybe(..), fromMaybe)
 import Prelude
-import Data.Foldable (traverse_)
+
 import Data.Int (fromString)
-import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Unsafe (unsafePerformEffect)
 import React.Basic.DOM as R
 import React.Basic.DOM.Events (targetValue)
-import React.Basic.Events (handler, handler_)
+import React.Basic.Events (handler)
 import React.Basic.Hooks (Component, component, useState, (/\))
 import React.Basic.Hooks as React
 
@@ -29,27 +29,39 @@ mkEnterScore = do
     text /\ setText <- useState { text: "", value: 0 }
     pure
       $ R.div_
-          [ R.button
+          [ R.input
+              { type: "text"
+              , className: "border-gray-500 border-2 rounded p-2"
+              , placeholder: "score"
+              , value: text.text
+              , onChange:
+                  let
+                    handleValue mv = setText (\_ -> convertInput mv)
+                  in              
+                  handler targetValue handleValue
+              }
+          , R.button
               { type: "button"
               , className: "rounded bg-blue-500 text-white p-2"
               , onClick:
-                  handler_ do
-                    props.onOk text.value
-                    setText \_ -> { text: "", value: 0 }
+                  let
+                    handleValue _ = do
+                      props.onOk text.value
+                      setText \_ -> { text: "", value: 0 }
+                  in              
+                  handler targetValue handleValue
+                    
+                    
               , children: [ R.text "Ok" ]
               }
-          , R.div_
-              [ R.input
-                  { type: "text"
-                  , className: "border-gray-500 border-2 rounded p-2"
-                  , placeholder: "score"
-                  , value: text.text
-                  , onChange: handler targetValue $ traverse_ \str -> setText (\_ -> convertInput str)
-                  }
-              ]
           ]
 
-convertInput :: String -> InputState
-convertInput s = case fromString s of
-  Nothing -> { text: s, value: 0 }
-  Just n -> { text: s, value: n }
+
+convertInput :: Maybe String -> InputState
+convertInput s = 
+  let 
+    cs = fromMaybe "" s
+  in
+    { text: cs, value: case fromString cs of 
+                    Nothing -> 0
+                    Just v -> v } 
